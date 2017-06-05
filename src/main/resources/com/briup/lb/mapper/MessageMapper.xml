@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.briup.lb.mapper.MessageMapper">
+	<resultMap type="com.briup.lb.bean.Message" id="messageRM">
+		<id property="id" column="MESSAGE_ID" />
+		<result property="userId" column="USER_ID" />
+		<result property="messageContents" column="MESSAGE_CONTENTS" />
+		<result property="messageDate" column="MESSAGE_DATE" />
+		<result property="state" column="STATE" />
+		<result property="messageAuthor" column="MESSAGE_AUTHOR" />
+	</resultMap>
+
+	<!-- 查询 -->
+	<select id="find" parameterType="map" resultMap="messageRM">
+		select MESSAGE_ID,USER_ID,MESSAGE_CONTENTS,MESSAGE_DATE,STATE,MESSAGE_AUTHOR,rownum 
+		from tbl_message where rownum &lt;= 2
+		<if test="state!=null"> and STATE=#{state}</if>
+		<if test="userId!=null"> and user_id=#{userId}</if>
+	</select>
+	
+	<select id="findHisMsg" parameterType="map" resultMap="messageRM">
+		select * from tbl_message where 1=1
+		<if test="state!=null"> and STATE=#{state}</if>
+		<if test="userId!=null"> and user_id=#{userId}</if>
+	</select>
+
+	<!-- 通过用户ID查询一个 -->
+	<select id="get" parameterType="string" resultMap="messageRM">
+		select * from
+		tbl_message
+		where user_id=#{id}
+	</select>
+	
+	<select id="getById" parameterType="string" resultMap="messageRM">
+		select * from
+		tbl_message
+		where message_id=#{id}
+	</select>
+
+	
+	<insert id="insert" parameterType="com.briup.lb.bean.Message">
+		insert into tbl_message
+		(MESSAGE_ID,USER_ID,MESSAGE_CONTENTS,MESSAGE_DATE,STATE,MESSAGE_AUTHOR)
+		values
+		(
+		#{id},
+		#{userId, jdbcType=VARCHAR},
+		#{messageContents,jdbcType=VARCHAR},
+		#{messageDate,jdbcType=TIMESTAMP},
+		#{state,jdbcType=INTEGER},
+		#{messageAuthor, jdbcType=VARCHAR}
+		)
+	</insert>
+
+	<!-- 删除一条 -->
+	<delete id="deleteById" parameterType="string">
+		delete from tbl_message
+		where
+		message_id=#{id}
+	</delete>
+	
+	<!-- 批量删除 -->
+	<delete id="delete" parameterType="string">
+		delete from tbl_message
+		where message_id in
+		<foreach collection="array" item="id" open="(" close=")"
+			separator=",">
+			#{id}
+		</foreach>
+	</delete>
+
+
+	<!-- 改变状态 -->
+	<update id="updateStatus" parameterType="map">
+		update tbl_message set state=#{state,jdbcType=INTEGER}
+		where message_id in
+		<foreach collection="ids" item="id" open="(" close=")"
+			separator=",">
+			#{id}
+		</foreach>
+	</update>
+
+</mapper>

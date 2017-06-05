@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.briup.lb.mapper.OutProductMapper">
+	<resultMap type="com.briup.lb.bean.vo.OutProductVO" id="outProductRM">
+		<result property="customerName" column="CUSTOMER_NAME" />
+		<result property="contractNo" column="CONTRACT_NO" />
+		<result property="productNo" column="PRODUCT_NO" />
+		<result property="quantity" column="QUANTITY" />
+		<result property="factoryName" column="FACTORY_NAME" />
+		<result property="deliveryPeriod" column="DELIVERY_PERIOD" />
+		<result property="shipingDate" column="SHIPING_DATE" />
+		<result property="tradeTerms" column="TRADE_TERMS" />
+	</resultMap>
+
+	<!-- 按船期查询某个月已上报的购销合同统计 -->
+	<select id="find" parameterType="string" resultMap="outProductRM">
+		select
+		c.customer_name,c.contract_no,to_char(c.delivery_period,'yyyy-MM-dd') as delivery_period,to_char(c.shiping_date,'yyyy-MM-dd') as
+		shiping_date,c.trade_terms,
+		cp.product_no,concat(cp.quantity,cp.packing_unit) as
+		quantity,cp.factory_name
+		from
+		(select
+		contract_id,customer_name,contract_no,delivery_period,shiping_date,trade_terms,state
+		from tbl_contract) c
+		left join
+		(select contract_id,product_no,quantity,packing_unit,factory_name from
+		tbl_contract_product) cp
+		on c.contract_id=cp.contract_id
+
+		where to_char(c.shiping_date,'yyyy-MM') = #{inputDate} and c.state = 1
+	</select>
+</mapper>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.briup.lb.mapper.FeedBackMapper">
+	<resultMap type="com.briup.lb.bean.FeedBack" id="feedBackRM">
+		<id property="id" column="FEEDBACK_ID" />
+		<result property="inputBy" column="INPUT_BY" />
+		<result property="inputTime" column="INPUT_TIME" />
+		<result property="telephone" column="TELEPHONE" />
+		<result property="content" column="CONTENT" />
+		<result property="response" column="RESPONSE" />
+		<result property="state" column="STATE" />
+	</resultMap>
+
+	<select id="findByUserName" parameterType="string" resultMap="feedBackRM">
+		select * from tbl_feedback where input_by=#{userName}
+	</select>
+
+	<!-- 查询 -->
+	<select id="find" parameterType="map" resultMap="feedBackRM">
+		select * from
+		tbl_feedback where 1=1
+		<if test="state!=null"> and STATE=#{state}</if>
+	</select>
+
+	<!-- 查询一个 -->
+	<select id="get" parameterType="string" resultMap="feedBackRM">
+		select * from
+		tbl_feedback
+		where feedback_id=#{id}
+	</select>
+
+	<insert id="insert" parameterType="com.briup.lb.bean.FeedBack">
+		insert into tbl_feedback
+		(FEEDBACK_ID,INPUT_BY,INPUT_TIME,TELEPHONE,CONTENT,RESPONSE,STATE)
+		values
+		(
+		#{id},
+		#{inputBy, jdbcType=VARCHAR},
+		#{inputTime, jdbcType=TIMESTAMP},
+		#{telephone, jdbcType=VARCHAR},
+		#{content, jdbcType=VARCHAR},
+		#{response, jdbcType=VARCHAR},
+		#{state, jdbcType=VARCHAR}
+		)
+	</insert>
+
+	<!-- 修改 -->
+	<update id="update" parameterType="com.briup.lb.bean.FeedBack">
+		update tbl_feedback
+		<set>
+			<if test="response != null">RESPONSE=#{response},</if>
+			<if test="state != null">STATE=#{state},</if>
+		</set>
+		where feedback_id=#{id}
+	</update>
+
+	<!-- 删除一条 -->
+	<delete id="deleteById" parameterType="string">
+		delete from tbl_feedback
+		where
+		feedback_id=#{id}
+	</delete>
+
+	<!-- 批量删除 -->
+	<delete id="delete" parameterType="string">
+		delete from tbl_feedback
+		where feedback_id in
+		<foreach collection="array" item="id" open="(" close=")"
+			separator=",">
+			#{id}
+		</foreach>
+	</delete>
+	
+	<!-- 改变状态 -->
+	<update id="updateStatus" parameterType="map">
+		update tbl_feedback set state=#{state}
+		where feedback_id in
+		<foreach collection="ids" item="id" open="(" close=")"
+			separator=",">
+			#{id}
+		</foreach>
+	</update>
+
+</mapper>

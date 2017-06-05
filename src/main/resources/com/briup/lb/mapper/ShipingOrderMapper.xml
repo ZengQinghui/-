@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.briup.lb.mapper.ShipingOrderMapper">
+	<resultMap type="com.briup.lb.bean.ShipingOrder" id="shipingOrderRM">
+		<id property="id" column="SHIPING_ORDER_ID"/>
+		
+		<result property="shipper" column="SHIPPER"/>
+		<result property="orderType" column="ORDER_TYPE"/>
+		<result property="consignee" column="CONSIGNEE"/>
+		<result property="notifyParty" column="NOTIFY_PARTY"/>
+		<result property="lcNo" column="LC_NO"/>
+		<result property="portOfLoading" column="PORT_OF_LOADING"/>
+		<result property="portOfTrans" column="PORT_OF_TRANS"/>
+		<result property="portOfDischarge" column="PORT_OF_DISCHARGE"/>
+		<result property="loadingDate" column="LOADING_DATE"/>
+		<result property="limitDate" column="LIMIT_DATE"/>
+		<result property="isBatch" column="IS_BATCH"/>
+		<result property="isTrans" column="IS_TRANS"/>
+		<result property="copyNum" column="COPY_NUM"/>
+		<result property="cnote" column="CNOTE"/>
+		<result property="specialCondition" column="SPECIAL_CONDITION"/>
+		<result property="carriage" column="CARRIAGE"/>
+		<result property="state" column="STATE"/>
+		<result property="checkBy" column="CHECK_BY"/>
+		<result property="createBy" column="CREATE_BY"/>
+		<result property="createDept" column="CREATE_DEPT"/>
+		<result property="createTime" column="CREATE_TIME"/>		
+	</resultMap>
+	
+	<select id="find" parameterType="map" resultMap="shipingOrderRM">
+		select * from tbl_shiping_order
+		where 1=1
+	</select>
+	
+	<select id="get" parameterType="string" resultMap="shipingOrderRM">
+		select * from tbl_shiping_order
+		where shiping_order_id=#{pid}
+	</select>
+	
+	<insert id="insert" parameterType="com.briup.lb.bean.ShipingOrder">
+		insert into tbl_shiping_order
+		(SHIPING_ORDER_ID,ORDER_TYPE,SHIPPER,CONSIGNEE,NOTIFY_PARTY,LC_NO,PORT_OF_LOADING,PORT_OF_TRANS,PORT_OF_DISCHARGE,LOADING_DATE,LIMIT_DATE,IS_BATCH,IS_TRANS,COPY_NUM,CNOTE,SPECIAL_CONDITION,CARRIAGE,STATE,CHECK_BY,CREATE_BY,CREATE_DEPT,CREATE_TIME)
+		values
+		(
+			#{id},
+			#{orderType, jdbcType=VARCHAR},
+			#{shipper, jdbcType=VARCHAR},
+			#{consignee, jdbcType=VARCHAR},
+			#{notifyParty, jdbcType=VARCHAR},
+			#{lcNo, jdbcType=VARCHAR},
+			#{portOfLoading, jdbcType=VARCHAR},
+			#{portOfTrans, jdbcType=VARCHAR},
+			#{portOfDischarge, jdbcType=VARCHAR},
+			#{loadingDate, jdbcType=TIMESTAMP},
+			#{limitDate, jdbcType=TIMESTAMP},
+			#{isBatch, jdbcType=VARCHAR},
+			#{isTrans, jdbcType=VARCHAR},
+			#{copyNum, jdbcType=VARCHAR},
+			#{cnote, jdbcType=VARCHAR},
+			#{specialCondition, jdbcType=VARCHAR},
+			#{carriage, jdbcType=VARCHAR},
+			#{state, jdbcType=INTEGER},
+			#{checkBy, jdbcType=VARCHAR},
+			#{createBy, jdbcType=VARCHAR},
+			#{createDept, jdbcType=VARCHAR},
+			#{createTime, jdbcType=TIMESTAMP}
+		)
+	</insert>
+	
+	<update id="update" parameterType="com.briup.lb.bean.ShipingOrder">
+		update tbl_shiping_order
+		<set>
+			<if test="orderType != null">ORDER_TYPE=#{orderType},</if>
+			<if test="shipper != null">SHIPPER=#{shipper},</if>
+			<if test="consignee != null">CONSIGNEE=#{consignee},</if>
+			<if test="notifyParty != null">NOTIFY_PARTY=#{notifyParty},</if>
+			<if test="lcNo != null">LC_NO=#{lcNo},</if>
+			<if test="portOfLoading != null">PORT_OF_LOADING=#{portOfLoading},</if>
+			<if test="portOfTrans != null">PORT_OF_TRANS=#{portOfTrans},</if>
+			<if test="portOfDischarge != null">PORT_OF_DISCHARGE=#{portOfDischarge},</if>
+			<if test="loadingDate != null">LOADING_DATE=#{loadingDate},</if>
+			<if test="limitDate != null">LIMIT_DATE=#{limitDate},</if>
+			<if test="isBatch != null">IS_BATCH=#{isBatch},</if>
+			<if test="isTrans != null">IS_TRANS=#{isTrans},</if>
+			<if test="copyNum != null">COPY_NUM=#{copyNum},</if>
+			<if test="cnote != null">CNOTE=#{cnote},</if>
+			<if test="specialCondition != null">SPECIAL_CONDITION=#{specialCondition},</if>
+			<if test="carriage != null">CARRIAGE=#{carriage},</if>
+			<if test="state != null">STATE=#{state},</if>
+		</set>
+		where shiping_order_id=#{id}
+	</update>
+	
+	<!-- 删除一条 -->
+	<delete id="deleteById" parameterType="string">
+		delete from tbl_shiping_order
+		where shiping_order_id=#{pid}
+	</delete>
+	
+	<!-- 删除多条（一维字符串数组） -->
+	<delete id="delete" parameterType="string">
+		delete from tbl_shiping_order
+		where shiping_order_id in
+		<foreach collection="array" item="id" open="(" close=")" separator=",">
+			#{id}
+		</foreach>
+	</delete>
+	
+	<!-- 修改状态 -->
+	<update id="updateState" parameterType="map">
+		update tbl_shiping_order set state=#{state}
+		where shiping_order_id in
+		<foreach collection="ids" item="id" open="(" close=")"
+			separator=",">
+			#{id}
+		</foreach>
+	</update>
+</mapper>

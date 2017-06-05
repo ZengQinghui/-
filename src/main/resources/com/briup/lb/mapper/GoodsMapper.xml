@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.briup.lb.mapper.GoodsMapper">
+	<resultMap type="com.briup.lb.bean.Goods" id="goodsRM">
+		<id property="id" column="GOODS_ID"/>
+		
+		<result property="waybillId" column="WAYBILL_ID"/>
+		<result property="factoryId" column="FACTORY_ID"/>
+		
+		<result property="factoryName" column="FACTORY_NAME"/>
+		<result property="productNo" column="PRODUCT_NO"/>
+		<result property="quantity" column="QUANTITY"/>
+		<result property="packingUnit" column="PACKING_UNIT"/>
+		<result property="price" column="PRICE"/>
+		<result property="boxNum" column="BOX_NUM"/>
+		
+		<result property="grossWeight" column="GROSS_WEIGHT"/>
+		<result property="netWeight" column="NET_WEIGHT"/>
+		<result property="sizeLength" column="SIZE_LENGTH"/>
+		<result property="sizeWidth" column="SIZE_WIDTH"/>
+		<result property="sizeHeight" column="SIZE_HEIGHT"/>
+		<result property="exPrice" column="EX_PRICE"/>
+		<result property="tax" column="TAX"/>
+		
+		<result property="orderNo" column="ORDER_NO"/>
+	</resultMap>
+	
+	<!-- 查询某个报运下的货物信息 -->
+	<select id="find" parameterType="map" resultMap="goodsRM">
+		select * from tbl_goods
+		where 1=1
+		<if test="waybillId != null">and waybill_id=#{waybillId}</if>
+	</select>
+	
+	<select id="get" parameterType="string" resultMap="goodsRM">
+		select * from tbl_goods
+		where goods_id=#{pid}
+	</select>
+	
+	<insert id="insert" parameterType="com.briup.lb.bean.Goods">
+		insert into tbl_goods
+		(GOODS_ID,WAYBILL_ID,FACTORY_ID,FACTORY_NAME,PRODUCT_NO,QUANTITY,PACKING_UNIT,
+			PRICE,BOX_NUM,GROSS_WEIGHT,NET_WEIGHT,SIZE_LENGTH,SIZE_WIDTH,SIZE_HEIGHT,EX_PRICE,TAX,ORDER_NO)
+		values
+		(
+			#{id},
+			#{waybillId, jdbcType=VARCHAR},
+			#{factoryId, jdbcType=VARCHAR},
+			#{factoryName, jdbcType=VARCHAR},
+			#{productNo, jdbcType=VARCHAR},
+			#{quantity, jdbcType=INTEGER},
+			#{packingUnit, jdbcType=VARCHAR},
+			#{price, jdbcType=DOUBLE},
+			#{boxNum, jdbcType=INTEGER},
+			#{grossWeight, jdbcType=DOUBLE},
+			#{netWeight, jdbcType=DOUBLE},
+			#{sizeLength, jdbcType=DOUBLE},
+			#{sizeWidth, jdbcType=DOUBLE},
+			#{sizeHeight, jdbcType=DOUBLE},
+			#{exPrice, jdbcType=DOUBLE},
+			#{tax, jdbcType=DOUBLE},
+			#{orderNo, jdbcType=INTEGER}
+		)
+	</insert>
+	
+	<update id="update" parameterType="com.briup.lb.bean.Goods">
+		update tbl_goods
+		<set>
+			<if test="waybillId != null">WAYBILL_ID=#{waybillId},</if>
+			<if test="factoryId != null">FACTORY_ID=#{factoryId},</if>
+			<if test="factoryName != null">FACTORY_NAME=#{factoryName},</if>
+			<if test="productNo != null">PRODUCT_NO=#{productNo},</if>
+			<if test="quantity != null">QUANTITY=#{quantity},</if>
+			<if test="packingUnit != null">PACKING_UNIT=#{packingUnit},</if>
+			<if test="price != null">PRICE=#{price},</if>
+			<if test="boxNum != null">BOX_NUM=#{boxNum},</if>
+			<if test="grossWeight != null">GROSS_WEIGHT=#{grossWeight},</if>
+			<if test="netWeight != null">NET_WEIGHT=#{netWeight},</if>
+			<if test="sizeLength != null">SIZE_LENGTH=#{sizeLength},</if>
+			<if test="sizeWidth != null">SIZE_WIDTH=#{sizeWidth},</if>
+			<if test="sizeHeight != null">SIZE_HEIGHT=#{sizeHeight},</if>
+			<if test="exPrice != null">EX_PRICE=#{exPrice},</if>
+			<if test="tax != null">TAX=#{tax},</if>
+			<if test="orderNo != null">ORDER_NO=#{orderNo},</if>
+		</set>
+		where goods_id=#{id}
+	</update>
+	
+	<!-- 级联删除：删除报运单前，先删除货物 -->
+	<delete id="deleteByWaybillId" parameterType="string">
+		delete from tbl_goods
+		where waybill_id in
+		<foreach collection="array" item="id" open="(" close=")" separator=",">
+			#{id}
+		</foreach>
+	</delete>
+	
+</mapper>

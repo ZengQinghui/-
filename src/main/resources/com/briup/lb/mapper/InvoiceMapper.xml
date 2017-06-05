@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.briup.lb.mapper.InvoiceMapper">
+	<resultMap type="com.briup.lb.bean.Invoice" id="invoiceRM">
+		<id property="id" column="INVOICE_ID" />
+		
+		<result property="scNo" column="SC_NO" />
+		<result property="invoiceNo" column="INVOICE_NO" />
+		<result property="tradeTerms" column="TRADE_TERMS" />
+		<result property="createBy" column="CREATE_BY" />
+		<result property="createDept" column="CREATE_DEPT" />
+		<result property="createTime" column="CREATE_TIME" />
+	</resultMap>
+
+	<select id="get" parameterType="string" resultMap="invoiceRM">
+		select * from
+		tbl_invoice
+		where invoice_id=#{id}
+	</select>
+
+	<insert id="insert" parameterType="com.briup.lb.bean.Contract">
+		insert into tbl_invoice
+		(INVOICE_ID,SC_NO,INVOICE_NO,TRADE_TERMS,CREATE_BY,CREATE_DEPT,CREATE_TIME)
+		values
+		(
+		#{id},
+		#{scNo, jdbcType=VARCHAR},
+		#{invoiceNo, jdbcType=VARCHAR},
+		#{tradeTerms, jdbcType=VARCHAR},
+		#{createBy, jdbcType=VARCHAR},
+		#{createDept,jdbcType=VARCHAR},
+		#{createTime, jdbcType=TIMESTAMP}
+		)
+	</insert>
+
+	<update id="update" parameterType="com.briup.lb.bean.Contract">
+		update tbl_invoice
+		<set>
+			<if test="scNo != null">SC_NO=#{scNo},</if>
+			<if test="invoiceNo != null">INVOICE_NO=#{invoiceNo},</if>
+			<if test="tradeTerms != null">TRADE_TERMS=#{tradeTerms},</if>
+		</set>
+		where invoice_id=#{id}
+	</update>
+
+	<!-- 删除一条 -->
+	<delete id="deleteById" parameterType="string">
+		delete from tbl_invoice
+		where invoice_id=#{id}
+	</delete>
+
+	<!-- 批量删除 -->
+	<delete id="delete" parameterType="string">
+		delete from tbl_invoice
+		where invoice_id in
+		<foreach collection="array" item="id" open="(" close=")"
+			separator=",">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>
